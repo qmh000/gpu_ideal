@@ -11,7 +11,7 @@
 #include <map>
 #include <boost/program_options.hpp>
 
-#include "Point.h"
+#include "Point.cuh"
 #include "util.h"
 
 namespace po = boost::program_options;

@@ -1,4 +1,4 @@
-#include "../include/Point.h"
+#include "../include/Point.cuh"
 
 Point::Point(double _x, double _y){
     x = _x;

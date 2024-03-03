@@ -6,7 +6,7 @@ VertexSequence::VertexSequence(int nv){
 	numVertices = nv;
 }
 
-VertexSequence::~VertexSequence(){
+__host__ __device__ VertexSequence::~VertexSequence(){
     if(p != nullptr){
         delete []p;
     }

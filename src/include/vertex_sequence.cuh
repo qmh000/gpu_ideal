@@ -1,5 +1,5 @@
 #pragma once
-#include "Point.h"
+#include "Point.cuh"
 #include "Pixel.cuh"
 
 class VertexSequence{
@@ -10,7 +10,7 @@ public:
 public:
     VertexSequence() = default;
     VertexSequence(int nv);
-    ~VertexSequence();
+    __host__ __device__ ~VertexSequence();
 
     int get_numVertices();
     double get_pointX(int idx);

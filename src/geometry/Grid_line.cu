@@ -2,11 +2,12 @@
 #include <cstring>
 
 Grid_line::Grid_line(int size){
+    gridNum = size;
     offset = new int[size];
     memset(offset, 0, sizeof(int) * size);
 }
 
-Grid_line::~Grid_line(){
+__host__ __device__ Grid_line::~Grid_line(){
     if(offset) delete []offset;
     if(intersection_nodes) delete []intersection_nodes;
 }

@@ -2,15 +2,18 @@
 #include <stddef.h>
 
 class Grid_line{
-private:
+public:
 	int *offset = nullptr;
+
+	int gridNum = 0;
+
 	double *intersection_nodes = nullptr;
 
 	int numCrosses = 0;
 public:
 	Grid_line() = default;
     Grid_line(int size);
-	~Grid_line();
+	__host__ __device__ ~Grid_line();
 	void init_intersection_nodes(int num_nodes);
 
 	//utility functions

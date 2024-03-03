@@ -6,13 +6,6 @@
 #include <algorithm>
 #include <string>
 
-MyRaster::~MyRaster(){
-	if(mbr != nullptr) delete mbr;
-	if(pixels != nullptr) delete pixels;
-	if(horizontal != nullptr) delete horizontal;
-	if(vertical != nullptr) delete vertical;
-}
-
 MyRaster::MyRaster(VertexSequence *vst, int epp){
 	assert(epp>0);
 	vs = vst;
@@ -38,22 +31,12 @@ MyRaster::MyRaster(VertexSequence *vst, int epp){
 	}
 }
 
-int MyRaster::get_id(int x, int y){
-	assert(x>=0&&x<=dimx);
-	assert(y>=0&&y<=dimy);
-	return y * (dimx+1) + x;
+__host__ __device__ MyRaster::~MyRaster(){
+	if(mbr != nullptr) delete mbr;
+	if(pixels != nullptr) delete pixels;
+	if(horizontal != nullptr) delete horizontal;
+	if(vertical != nullptr) delete vertical;
 }
-
-// from id to pixel x
-int MyRaster::get_x(int id){
-	return id % (dimx+1);
-}
-
-// from id to pixel y
-int MyRaster::get_y(int id){
-	assert((id / (dimx+1)) <= dimy);
-	return id / (dimx+1);
-} 
 
 void MyRaster::process_crosses(std::map<int, std::vector<cross_info>> edges_info){
 	int num_edge_seqs = 0;
@@ -390,6 +373,9 @@ void MyRaster::rasterization(){
 	//3. determine the status of rest pixels with scanline rendering
 	scanline_reandering();
 }
+
+
+
 
 box* MyRaster::get_mbr(){return mbr;}
 void MyRaster::set_mbr(box* addr){mbr = addr;}
