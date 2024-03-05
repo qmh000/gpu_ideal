@@ -1,3 +1,3 @@
 make clean
-make contain
-../build/contain
+make -j16 debug_contain
+../build/debug_contain

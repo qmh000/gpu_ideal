@@ -1,5 +1,6 @@
 #include "../include/helper_cuda.h"
 #include "../include/MyPolygon.cuh"
+#include <ctime>
 
 #define BLOCK_SIZE 1024
 
@@ -15,6 +16,7 @@ __global__ void kernel(MyRaster* rasters, Point* points, int size, int *result){
 int main(int argc, char** argv){
     query_context global_ctx;
     global_ctx.num_threads = 1;
+    global_ctx.vpr = 10;
     global_ctx.source_polygons = load_binary_file("/home/qmh/data/child.idl", global_ctx);
     
     preprocess(&global_ctx);
@@ -22,11 +24,12 @@ int main(int argc, char** argv){
     printf("Rasterization Finished!\n");
 
     int size1 = global_ctx.source_polygons.size(), size2 = 0;
+
     MyRaster* h_rasters = new MyRaster[size1];
     Point* h_points = load_points("/home/qmh/data/child_points.dat", size2);
 
-    // int size = min(size1, size2);
-    int size = 10;
+    // int size = 10;
+    int size = min(size1, size2);
     MyRaster* d_rasters = nullptr;
     Point* d_points = nullptr;
     int memsize1 = sizeof(MyRaster) * size;

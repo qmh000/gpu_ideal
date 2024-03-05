@@ -2,9 +2,9 @@
 #include <cstring>
 
 Grid_line::Grid_line(int size){
-    gridNum = size;
-    offset = new int[size];
-    memset(offset, 0, sizeof(int) * size);
+    gridNum = size + 2;
+    offset = new int[size + 2];
+    memset(offset, 0, sizeof(int) * (size+2));
 }
 
 __host__ __device__ Grid_line::~Grid_line(){
@@ -28,4 +28,8 @@ double Grid_line::get_node(int idx){return intersection_nodes[idx];}
 
 void Grid_line::add_node(int idx, double x){
     intersection_nodes[idx] = x;
+}
+
+int Grid_line::get_num_nodes(int y){
+    return offset[y + 1] - offset[y];
 }

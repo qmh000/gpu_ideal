@@ -64,6 +64,7 @@ public:
     }
 
     //utility functions
+    void print();
     box* get_mbr();
     void set_mbr(box* addr);
     VertexSequence* get_vs();
@@ -140,6 +141,8 @@ public:
         if(pixels->show_status(target) == OUT){
         	return false;
         }
+
+        // return false;
 
         bool ret = false;
 

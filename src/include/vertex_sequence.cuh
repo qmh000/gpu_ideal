@@ -17,6 +17,8 @@ public:
     double get_pointY(int idx);
     
     box* getMBR();
+
+    void print(bool complete_ring);
     
     size_t decode(char *source);
 };

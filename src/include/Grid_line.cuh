@@ -21,4 +21,5 @@ public:
 	int get_offset(int gid);
 	void add_node(int idx, double x);
 	double get_node(int idx);
+	int get_num_nodes(int y);
 };

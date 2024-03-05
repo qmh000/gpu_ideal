@@ -26,12 +26,18 @@ public:
 
     // some utility functions
     int get_numVertices();
+    void print_without_head(bool complete_ring);
+    void print(bool complete_ring);
 
     // for filtering
     box* getMBR();
     void rasterization(int vertex_per_raster);
 
     size_t decode(char *source);
+
+    static MyPolygon *gen_box(double minx,double miny,double maxx,double maxy);
+	static MyPolygon *gen_box(box &pix);
+
      
 };
 

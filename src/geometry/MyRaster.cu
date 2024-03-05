@@ -1,10 +1,13 @@
 #include "../include/MyRaster.cuh"
+#include "../include/MyMultiPolygon.cuh"
 #include <cassert>
 #include <map>
 #include <vector>
 #include <iostream>
 #include <algorithm>
 #include <string>
+
+class MyMultiPolygon;
 
 MyRaster::MyRaster(VertexSequence *vst, int epp){
 	assert(epp>0);
@@ -95,7 +98,7 @@ void MyRaster::process_intersection(std::map<int, std::vector<double>> intersect
 		for(auto info : intersection_info){
 			auto h = info.first;
 			auto nodes = info.second;
-			
+		
 			sort(nodes.begin(), nodes.end());
 
 			horizontal->set_offset(h, idx);
@@ -105,10 +108,11 @@ void MyRaster::process_intersection(std::map<int, std::vector<double>> intersect
 				idx ++;
 			}
 		}
-		horizontal->set_offset(dimy, idx);
+		horizontal->set_offset(dimy+1, idx);
 	}else{
 		vertical->init_intersection_nodes(num_nodes);
 		int idx = 0;
+
 		for(auto info : intersection_info){
 			auto h = info.first;
 			auto nodes = info.second;
@@ -122,7 +126,7 @@ void MyRaster::process_intersection(std::map<int, std::vector<double>> intersect
 				idx ++;
 			}
 		}
-		vertical->set_offset(dimx, idx);		
+		vertical->set_offset(dimx+1, idx);		
 	}
 }
 
@@ -133,8 +137,8 @@ void MyRaster::process_pixels(int x, int y){
 void MyRaster::init_pixels(){
 	assert(mbr);
 	pixels = new Pixel((dimx+1)*(dimy+1));
-	horizontal =  new Grid_line(dimy + 1);
-	vertical = new Grid_line(dimx + 1);
+	horizontal =  new Grid_line(dimy);
+	vertical = new Grid_line(dimx);
 }
 
 void MyRaster::evaluate_edges(){
@@ -374,7 +378,38 @@ void MyRaster::rasterization(){
 	scanline_reandering();
 }
 
+void MyRaster::print(){
+	MyMultiPolygon *inpolys = new MyMultiPolygon();
+	MyMultiPolygon *borderpolys = new MyMultiPolygon();
+	MyMultiPolygon *outpolys = new MyMultiPolygon();
 
+	for(int i=0;i<=dimx;i++){
+		for(int j=0;j<=dimy;j++){
+			box bx = get_pixel_box(i, j);
+			MyPolygon *m = MyPolygon::gen_box(bx);
+			if(pixels->show_status(get_id(i, j)) == BORDER){
+				borderpolys->insert_polygon(m);
+			}else if(pixels->show_status(get_id(i, j)) == IN){
+				inpolys->insert_polygon(m);
+			}else if(pixels->show_status(get_id(i, j)) == OUT){
+				outpolys->insert_polygon(m);
+			}
+		}
+	}
+
+	std::cout << "border:" << borderpolys->num_polygons() << std::endl;
+	borderpolys->print();
+	std::cout<<"in:"<< inpolys->num_polygons() << std::endl;
+	inpolys->print();
+	std::cout<<"out:"<< outpolys->num_polygons() << std::endl;
+	outpolys->print();
+	std::cout << std::endl;
+
+
+	delete borderpolys;
+	delete inpolys;
+	delete outpolys;
+}
 
 
 box* MyRaster::get_mbr(){return mbr;}
