@@ -16,12 +16,14 @@ __global__ void kernel(MyRaster* rasters, Point* points, int size, int *result){
 int main(int argc, char** argv){
     query_context global_ctx;
     global_ctx.num_threads = 1;
-    global_ctx.vpr = 10;
+    std::cout << "EPP = ";
+    std::cin >> global_ctx.vpr;
+    // global_ctx.vpr = 100;
     global_ctx.source_polygons = load_binary_file("/home/qmh/data/child.idl", global_ctx);
     
     preprocess(&global_ctx);
 
-    printf("Rasterization Finished!\n");
+    printf("Rasterization Finished! EPP = %d\n", global_ctx.vpr);
 
     int size1 = global_ctx.source_polygons.size(), size2 = 0;
 
@@ -103,7 +105,7 @@ int main(int argc, char** argv){
 
     checkCudaErrors(cudaMemcpy(d_rasters, h_rasters, memsize1, cudaMemcpyHostToDevice));
 
-    int *d_result = NULL;
+    int *d_result = nullptr;
 	checkCudaErrors(cudaMalloc((void**) &d_result, sizeof(int)));
 	checkCudaErrors(cudaMemset(d_result, 0, sizeof(int)));
 

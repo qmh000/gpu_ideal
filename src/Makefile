@@ -36,13 +36,11 @@ all:	contain_polygon within_polygon
 
 contain:	query/contain_cu.o $(GEOMETRY_OBJS)
 	$(CXX) -o ../build/$@ $^ $(LIBS) 
-print_raster:	test/print_raster.o $(GEOMETRY_OBJS)
+
+contain_polygon:	query/contain_polygon_cu.o $(GEOMETRY_OBJS)
 	$(CXX) -o ../build/$@ $^ $(LIBS) 
 
-# contain:	query/contain.o $(GEOMETRY_OBJS)
-# 	$(CXX) -o ../build/$@ $^ $(LIBS) 
-
-contain_polygon:	query/contain_polygon.o $(GEOMETRY_OBJS)
+print_raster:	test/print_raster.o $(GEOMETRY_OBJS)
 	$(CXX) -o ../build/$@ $^ $(LIBS) 
 
 distance:	query/distance.o $(GEOMETRY_OBJS)

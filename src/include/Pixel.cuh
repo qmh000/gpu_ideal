@@ -41,6 +41,13 @@ public:
             p.y>=low[1]&&
             p.y<=high[1];
     }
+
+    __host__ __device__ bool contain(box &target){
+        return target.low[0]>=low[0]&&
+		       target.high[0]<=high[0]&&
+		       target.low[1]>=low[1]&&
+		       target.high[1]<=high[1];
+    }
 };
 
 class Pixel{

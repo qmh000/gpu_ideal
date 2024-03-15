@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include "../include/helper_cuda.h"
 
 enum cross_type{
 	ENTER = 0,
@@ -84,6 +85,11 @@ public:
     // the range must be [0, dimy]
     __host__ __device__ int get_offset_y(double yval){
         assert(mbr);
+        if(step_y<=0.000000000001){
+            printf("dimx=%d, dimy=%d\n", dimx, dimy);
+            printf("step_x=%lf, step_y=%lf\n", step_x, step_y);
+            printf("box: (%lf, %lf) (%lf, %lf)\n", mbr->low[0], mbr->low[1], mbr->high[0], mbr->high[1]);
+        }
         assert(step_y>0.000000000001 && "the hight per pixel must not be 0");
         int y = (int)((yval-mbr->low[1])/step_y);
         return min(max(y, 0), dimy);
@@ -109,6 +115,24 @@ public:
     __host__ __device__ int get_numSequences(int id){
         if(pixels->show_status(id) != BORDER) return 0;
         return pixels->pointer[id + 1] - pixels->pointer[id];
+    }
+
+    __host__ __device__ int retrieve_pixels(box *target, int *pxs){
+
+        int start_x = get_offset_x(target->low[0]);
+        int start_y = get_offset_y(target->low[1]);
+        int end_x = get_offset_x(target->high[0]);
+        int end_y = get_offset_y(target->high[1]);
+
+        int idx = 0;
+        int size = (end_x-start_x+1) * (end_y-start_y+1);
+        checkCudaErrors(cudaMalloc((void **) &pxs, size * sizeof(int)));
+        for(int i=start_x;i<=end_x;i++){
+            for(int j=start_y;j<=end_y;j++){
+                pxs[idx ++] = (get_id(i , j));
+            }
+        }
+        return size;
     }
 
     // query
@@ -142,6 +166,20 @@ public:
         	return false;
         }
 
+        // if(!mbr->contain(p)){
+        // 	return true;
+        // }
+
+        // int target = get_pixel_id(p);
+        // box bx = get_pixel_box(get_x(target), get_y(target));
+
+        // if(pixels->show_status(target) == IN) {
+        // 	return true;
+        // }
+        // if(pixels->show_status(target) == OUT){
+        // 	return true;
+        // }
+
         // return false;
 
         bool ret = false;
@@ -166,5 +204,25 @@ public:
 			ret = !ret;
 		}
         return ret;
+    }
+
+    __host__ __device__ bool contain(MyRaster &target){
+        if(!mbr->contain(*target.mbr)){
+		    return false;
+	    }
+        int* pxs =  nullptr;
+        int size = retrieve_pixels(target.mbr, pxs);
+        int etn = 0;
+		int itn = 0;
+
+        for(int i = 0; i < size; i ++){
+            if(pixels->show_status(pxs[i]) == OUT) etn ++;
+            if(pixels->show_status(pxs[i]) == IN) itn ++;
+        }
+        if(etn == size) return false;
+        if(itn == size) return true;
+
+        return false;
+
     }
 };

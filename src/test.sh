@@ -1,3 +1,5 @@
+#!/bin/bash
+
 make clean
-make -j16 debug_contain
-../build/debug_contain
+make -j16 $1
+../build/$1
